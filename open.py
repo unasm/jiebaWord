@@ -15,9 +15,6 @@ timeFormat = "%Y-%m-%d %H:%M:%S"
 # 获取一行tr的数据
 def getTrData(tr):
     arrNode = {}
-
-
-
     #print tr.name
     tds = tr.find_all("td")
     if len(tds) != 8:

@@ -50,7 +50,14 @@ def getConn():
 def get(where, tableName):
     sql = "SELECT * FROM " + tableName + " where "
     for k in where:
-        sql = sql + "`" + k +"` = '" + mysql.escape_string(where[k]) + "'"
+        if hasattr(where[k], "encode"):
+            sql = sql + "`" + k +"` = '" + where[k].encode("utf-8") + "' &&"
+        else:
+            sql = sql + "`" + k +"` = '" + str(where[k]) + "' &&"
+    sql = sql.strip("&&")
+    #print sql
+        #sql = sql + "`" + k +"` = '" + where[k].encode("utf-8") + "'"
+        #sql = sql + "`" + k +"` = '" + mysql.escape_string(where[k]) + "'"
     return getOne(sql)
 
 
