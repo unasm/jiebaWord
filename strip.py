@@ -30,11 +30,9 @@ def parserNews(content):
     except Exception, ex: 
         print Exception,":", ex
     return ''
-def getUnParseData():
-    dataArr = db.GetList("select * from article where status = 0")
-    #dataArr = db.GetList("select * from article where status = 0 limit 1")
+def processData(dataArr, blackData):
+    jieba.load_userdict('/Users/tianyi/project/jieba/proj/new_dict.txt')
     pattern = re.compile(r'^\d+$')
-    blackData =  dbIgnore.getBlacks()
     for data in dataArr:
         print "cutting : " , data[0]
         #print data[5]
@@ -43,9 +41,11 @@ def getUnParseData():
         #seg_list = jieba.cut(news)
         # 能够匹配出来，动车，动车组，车组三种
         seg_list = jieba.cut(news, cut_all=True)
+        #seg_list = jieba.posseg.cut(news)
         #cnt = 0
         segs = []
         for seg in seg_list:
+            #print seg.word, seg.flag,带有情感的词
             if len(seg) <= 1:
                 continue
             #整数过滤掉
@@ -59,6 +59,15 @@ def getUnParseData():
             for seg in segs:
                 if word == seg:
                     cnt = cnt + 1
-            dbTrace.Insert(cnt, word, data[0])
-
+            where = {"article_id" : data[0], "word" : word}
+            #print where
+            row = db.get(where, 'track_key')
+            if not row:
+                print word
+                dbTrace.Insert(cnt, word, data[0])
+def getUnParseData():
+    dataArr = db.GetList("select * from article where status = 0")
+    #dataArr = db.GetList("select * from article where status = 0 limit 1")
+    blackData =  dbIgnore.getBlacks()
+    processData(dataArr, blackData) 
 getUnParseData()

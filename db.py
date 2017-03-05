@@ -1,7 +1,9 @@
 # -*- coding:utf-8 -*- 
 import MySQLdb as mysql
 
-conn = mysql.connect('localhost', 'root', '', 'analyze');
+#conn = mysql.connect('localhost', 'root', '', 'stock');
+conn = mysql.connect('localhost', 'root', '', 'analyze')
+
 def getOne(sql):
     #print sql
     cur = conn.cursor()
@@ -25,7 +27,8 @@ def Insert(dataArr, dataObj, tableName):
     keyStr = keyStr.strip(",") + ")"
     valStr = valStr.strip(",") + ")"
     sql = sql + keyStr + " VALUES "+ valStr
-
+    #print sql
+    #return 0
     try:
         cur.execute(sql, dataObj)
         #cur.executemany(sql, dataObj)

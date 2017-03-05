@@ -85,7 +85,7 @@ def object_decoder(obj):
 
 
 def jsonString(strData):
-        #char[] temp = s.toCharArray();       
+    #char[] temp = s.toCharArray();       
     s = list(strData)
     n = len(strData)
     #for i = 0; i < n; i++:
@@ -109,8 +109,8 @@ def jsonString(strData):
                         #print "replacing"
                         s[j] = '\''
                     #elif s[j+1] == ',' or s[j+1] == '}':
-                    else :
-                        #print "second", j
+                else :
+                    #print "second", j
                         break 
     return ''.join(s)
 
@@ -134,7 +134,8 @@ def getData(path, isLocal):
         dateTimer = time.strptime(row[1],'%Y/%m/%d %H:%M:%S')
         dateStr =  time.strftime("%Y%m%d", dateTimer)
         href = baseUrl  + dateStr + "/hy," + row[2] + ".html"
-        #content = ''
+    
+    #content = ''
         try:
             content = urllib2.urlopen(href).read().decode("gbk").encode("utf-8")
         except Exception,ex:
@@ -151,7 +152,7 @@ def getData(path, isLocal):
                 "industry_id",
                 "rate" ,
                 "content",
-        ]
+                ]
         dataObj = (
                 row[9], 
                 href, 
@@ -163,9 +164,10 @@ def getData(path, isLocal):
                 row[6],
                 str(int(float(row[11]) * 100)),
                 content,
-        )
+                )
         oldData = db.get({"href" : href},"article")
         if oldData == None:
+            print href
             db.Insert(nodeArr, dataObj, "article")
 
 #pageData = getData("http://datainterface.eastmoney.com//EM_DataCenter/js.aspx?type=SR&sty=HYSR&mkt=0&stat=0&cmd=4&code=&sc=&ps=50&p=3&js=var%20jpPdmCvt={%22data%22:[(x)],%22pages%22:%22(pc)%22,%22update%22:%22(ud)%22,%22count%22:%22(count)%22}&rt=49388255", 0)
@@ -173,10 +175,11 @@ def getData(path, isLocal):
 #pageData = getData("/Users/tianyi/Desktop/python.data", 1)
 pageSize = 50
 pageNum = (5797 / pageSize) + 1
+print pageNum
 
-for i in range(91, pageNum):
-    print "page is : ", i
+for i in range(1, 20):
+    #print "page is : ", i
     url = "http://datainterface.eastmoney.com//EM_DataCenter/js.aspx?type=SR&sty=HYSR&mkt=0&stat=0&cmd=4&code=&sc=&ps=" + str(pageSize) + "&p=" + str(i) + "&js=var%20jpPdmCvt={%22data%22:[(x)],%22pages%22:%22(pc)%22,%22update%22:%22(ud)%22,%22count%22:%22(count)%22}&rt=49388255"
-    print url
+    print i, "____", url
     pageData = getData(url, 0)
 #pageData = getData("/Users/tianyi/Desktop/python.data", 1)
