@@ -2,8 +2,8 @@
 
 # 显示某个文章里面的词频
 
-
-AID = 5707
+#AID = 5707
+AID = 5603
 
 import MySQLdb as mysql
 import db
