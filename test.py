@@ -9,6 +9,10 @@ import MySQLdb as mysql
 import time
 import db
 
-black = [1,2,3,4]
-b = [1,2,10,11]
-print set(b).difference(set(black))
+
+#
+#black = [1,2,3,4]
+#b = [1,2,10,11]
+#print set(b).difference(set(black))
+
+

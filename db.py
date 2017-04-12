@@ -75,6 +75,7 @@ def update(dataArr, dataObj, where, tableName):
         sql = sql + "`" + k +"` = '" + mysql.escape_string(where[k]) + "'"
 
     print sql
+    #return 
 
     cur = conn.cursor()
     try:

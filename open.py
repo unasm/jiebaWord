@@ -177,7 +177,7 @@ pageSize = 50
 pageNum = (5797 / pageSize) + 1
 print pageNum
 
-for i in range(1, 20):
+for i in range(1, 200):
     #print "page is : ", i
     url = "http://datainterface.eastmoney.com//EM_DataCenter/js.aspx?type=SR&sty=HYSR&mkt=0&stat=0&cmd=4&code=&sc=&ps=" + str(pageSize) + "&p=" + str(i) + "&js=var%20jpPdmCvt={%22data%22:[(x)],%22pages%22:%22(pc)%22,%22update%22:%22(ud)%22,%22count%22:%22(count)%22}&rt=49388255"
     print i, "____", url
