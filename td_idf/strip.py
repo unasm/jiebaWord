@@ -15,6 +15,7 @@ import jieba.analyse
 
 timeFormat = "%Y-%m-%d %H:%M:%S"
 
+
 # 获取一行tr的数据
 def parserNews(content, href):
     try: 
@@ -73,4 +74,3 @@ def getUnParseData():
     dataArr = db.GetList("select * from article where status = 0  and id not in (select distinct article_id from track_key) and id >= 32728")
     blackData =  dbIgnore.getBlacks()
     processData(dataArr, blackData) 
-#getUnParseData()

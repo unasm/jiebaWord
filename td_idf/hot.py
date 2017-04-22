@@ -85,11 +85,14 @@ class Hot:
                 break
             pR = pR_t
         return pR
+    #排序，根据pr值进行排序
+    #@
     def sortPr(self, pr):
         val = []
         for idx in range(0, len(pr)):
             val.append((idx, pr[idx]))
         return sorted(val, key = lambda val: val[1], reverse=True)
+    #显示 全部PR最高的 numbers 个单词
     def dispTopPr(self, numbers = 10):
         for idx in range(0, min(numbers, len(self.sortPRList))):
             row = self.sortPRList[idx]

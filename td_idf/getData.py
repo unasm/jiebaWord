@@ -12,7 +12,6 @@ import strip
 import db
 
 timeFormat = "%Y-%m-%d %H:%M:%S"
-
 # 获取一行tr的数据
 def getTrData(tr):
     arrNode = {}
@@ -140,12 +139,14 @@ def getData(path, isLocal):
         dateTimer = time.strptime(row[1],'%Y/%m/%d %H:%M:%S')
         dateStr =  time.strftime("%Y%m%d", dateTimer)
         href = "http://data.eastmoney.com/report/" + dateStr + "/hy," + row[2] + ".html"
-    
-        try:
-            content = urllib2.urlopen(href).read().decode("gbk").encode("utf-8")
-        except Exception,ex:
-            print href , "_____" , Exception,":",ex  
-            content = ''
+        for i in range (0, 3):
+            #最多尝试三次
+            try:
+                content = urllib2.urlopen(href).read().decode("gbk").encode("utf-8")
+                break
+            except Exception,ex:
+                print href , "_____" , Exception,":",ex  
+                content = ''
         nodeArr = [
                 "title" ,
                 "href" ,
@@ -180,6 +181,30 @@ def getData(path, isLocal):
             return False
     return True
 
+# 补充数据,content 为 空的
+def FixArtData():
+    dataArr = db.GetList("select id, href from article where content = ''")
+    #href = "http://data.eastmoney.com/report/" + dateStr + "/hy," + row[2] + ".html"
+    for art in dataArr:
+        for i in range (0, 3):
+            #最多尝试三次
+            try:
+                content = urllib2.urlopen(art[1]).read().decode("gbk").encode("utf-8")
+                break
+            except Exception,ex:
+                print art[1] 
+                print ex  
+                content = ''
+        if content == '':
+            print "still empty"
+            continue
+        nodeArr = [
+           'content',
+        ]
+        dataObj = (
+            content,
+        )
+        db.update(nodeArr, dataObj, {'id' : str(art[0])}, 'article')
 
 #获取数据的入口
 def getDataEntry():

@@ -20,9 +20,15 @@ class Word:
     #动词的列表
     VecArr = ['vd', 'vd', 'vg', 'vi', 'vn', 'vq']
 
+    timeStart = "0000-00-00 00:00:00"
+
     targetFlag = VecArr
-    __isTest = True
+    __isTest = False
+    #从每篇文章之中获取的单词数量
     __topWordNum = 10
+    #每个文章的分词结果
+
+    artTopN = None
     #if len(sys.argv) >= 3 and sys.argv[2] == 'nonu' :
 
     #nowTime = datetime.datetime.now()
@@ -159,13 +165,42 @@ class Word:
     # 返回某个单词的top N 列表, 如果没有artId ，则默认是全部
     #print self.artTopN.get(9293)
     def getArtTopN(self, artId = -1):
+        if type(artId) != type(1):
+            artId = int(artId.strip())
         if artId == -1:
             return self.artTopN
-        return self.artTopN.get(artId)
+        try:
+            data = self.artTopN.loc[artId]
+        except KeyError, ex:
+            return None
+        return data
+    def dispAllWords(self, artId = -1):
+        if artId == -1:
+            #words = self.artTopN
+            for art in self.artTopN:
+                print ""
+                for word in art:
+                    if len(word['word']) >= 9:
+                        print word['word'],"\t", 
+                    else: 
+                        print word['word'],"\t\t", 
+                    print word['count'], "\t", word['weight'], "\t", word['freqCoff'], "\t", word['selfFreq'], "\t", word['wordArtCnt'], "\t", word['artId']
+        else:
+            words = self.getArtTopN(artId)
+            if words == None:
+                return False
+            for word in words:
+                if len(word['word']) >= 12:
+                    print word['word'],"\t", 
+                else: 
+                    print word['word'],"\t\t", 
+                print word['count'], "\t", word['weight'], "\t", word['freqCoff'], "\t", word['selfFreq'], "\t", word['wordArtCnt'], "\t", word['artId']
+        return True
 
     def __init__(self, timeStart, timeEnd):
         #每个单词的出现总数
         sql = self.getSql(self.getArtIds(timeStart, timeEnd))
+        self.timeStart = timeStart
         #从数据库拿到的数据集合
         self.dbDf = pd.read_sql(sql, con=db.conn)
         self.wordArtCntTotal = self.dbDf.groupby('word').apply(self.getWordCntTotalGrp)
@@ -174,3 +209,15 @@ class Word:
         self.totalArtNum = self.dbDf.groupby('article_id').apply(self.getArtCnt).count()
         #获得每个单词的topN 个单词
         self.artTopN = self.dbDf.groupby('article_id').apply(self.getTopN)
+
+#dataDay = datetime.datetime.strptime("20161219", "%Y%m%d")
+#timeStart = dataDay.strftime("%Y-%m-%d 00:00:00")
+#timeEnd = dataDay.strftime("%Y-%m-%d 23:59:59")
+#wordObj = Word(timeStart, timeEnd)
+#arts = wordObj.getArtIds(timeStart, timeEnd)
+#print len(arts)
+#wordObj.dispAllWords()
+#print wordObj.getArtTopN(9087)
+#print wordObj.getArtTopN(90)
+#print type(wordObj.artTopN)
+#wordObj.getArtTopN(9087)
