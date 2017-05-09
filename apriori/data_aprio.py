@@ -6,6 +6,9 @@ sys.path.append("../lib")
 import db
 import pandas as pd
 import datetime as dtime
+from numba import vectorize
+from numba import jit
+from numba import guvectorize
 import time
 import numpy as np
 import colour
@@ -275,18 +278,26 @@ class StockApori:
         print codeNum
         print colNum
         for i in range(codeNum):
+            print i
             for j in range(i+1, codeNum):
                 codeA = index[i]
                 if codeA == "SH600519":
                     print "yes"
                 codeB = index[j]
-                variance = 0.0
+                #variance = 0.0
                 #print potDf.iloc[i]
                 #print potDf.iloc[j]
                 #potDf.iloc[j] - potDf.iloc[i]
                 #print type(potDf.iloc[i])
                 #exit()
-                variance = np.sum(potDf.iloc[j] - potDf.iloc[i])
+                #variance = np.sum(potDf.iloc[j] - potDf.iloc[i])
+                #print potDf.iloc[i].shape
+                #print potDf.iloc[i].dtype
+                variance = calVari(potDf.iloc[j].values, potDf.iloc[i].values)
+                #variance = vecgVari(potDf.iloc[j].values, potDf.iloc[i].values)
+                #print variance
+                #resList = sum1d(potDf.iloc[j], potDf.iloc[i])
+                #print resList
                 #variance = np.var(potDf.iloc[j] - potDf.iloc[i])
                 #variance = np.var([6, 1, 7])
                 #print variance
@@ -300,6 +311,7 @@ class StockApori:
                 if not variMapRev.has_key(codeB):
                     variMapRev[codeB] = {}
                 variMapRev[codeB][codeA] = variance
+                #exit()
                 #print potDf[[potDf.code = codeA]]
         #print index[0]
         #for idxa in index:
@@ -309,9 +321,58 @@ class StockApori:
     def calVariance(self, a, b):
         tmp = a - b
         return tmp * tmp
+
+#@vectorize(["float32(float32, float32)"], target="cuda")
+#@vectorize(["float32(float32, float32)"], target="cuda")
+#def vectorMinusArr(a , b):
+#    print type(a)
+#    print type(b)
+#    #return a - b
+
+#@vectorize(["float32(f8[:], f8[:])"], target="cuda")
+@jit('f4(f4[:], f4[:])')
+#@vectorize(["float32(f8[:], f8[:])"], target="cuda")
+#@vectorize(["int32(int32, int32)"], target="cuda")
+def vectorMinus(a , b):
+    #print type(a)
+    #print type(b)
+    return 1.1
+
+@jit('f8(f8[:], f8[:])')
+def calVari(arrA, arrB):
+    #print np.var(arrA - arrB)
+    return np.var(arrA - arrB)
+
+#@guvectorize(["float64(float64[:], float64[:], float64)"], '(n),()->()')
+@guvectorize(["void(float64[:], float64[:],float64[:])"], '(n),(n)->()')
+def vecgVari(x, y, res):
+    res[0] = np.var(x - y)
+    #return np.var(x - y)
+    #return res
+
+def checkNumba():
+    orgData = [1.1, 9.1]
+    arr = pd.Series(orgData, dtype=np.float64)
+    #arr = np.Series()
+    print type(np.random.random(10))
+    print type(arr.values)
+    print ""
+    print arr
+    print arr.values.shape
+    print arr.values.dtype
+    print ""
+    print np.random.random(4)
+    print np.random.random(4).shape
+    print np.random.random(4).dtype
+    #print type(arr)
+    #B = np.ones(2, dtype=np.float32 )
+    print sum1d(np.random.random(4))
+    print sum1d(arr.values)
+
 if __name__ == '__main__':
     obj = StockApori()
     obj.calMostVari()
+    #checkNumba()
     print "done"
     #obj.init()
     #obj.getAboutStock("SH600258")
