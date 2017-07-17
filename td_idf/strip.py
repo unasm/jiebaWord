@@ -15,6 +15,7 @@ import jieba.analyse
 
 timeFormat = "%Y-%m-%d %H:%M:%S"
 
+jieba.load_userdict('/Users/tianyi/project/jieba/extra_dict/dict_local.txt')
 
 # 获取一行tr的数据
 def parserNews(content, href):
@@ -35,7 +36,6 @@ def parserNews(content, href):
 
 # 用来切分单词
 def processData(dataArr, blackData):
-    jieba.load_userdict('/Users/tianyi/project/jieba/extra_dict/dict_local.txt')
     pattern = re.compile(r'^\d+$')
     for data in dataArr:
         print "cutting : " , data[0]
@@ -74,3 +74,9 @@ def getUnParseData():
     dataArr = db.GetList("select * from article where status = 0  and id not in (select distinct article_id from track_key) and id >= 32728")
     blackData =  dbIgnore.getBlacks()
     processData(dataArr, blackData) 
+if __name__ == '__main__':
+    row = db.getOne("select * from article where id = 1")
+    news = parserNews(row[5], row[2])
+    #news.strip()
+    print "asfda"
+    jieba.analyse.extract_tags(news, topK=10)
